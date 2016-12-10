@@ -49,8 +49,7 @@ function Update() {
 			state = 1;
 			rb.velocity = Vector2.zero;
 			textbox.SetActive(true);
-			//TODO: Set Text
-			uitext.text = "teassadasdas";
+
 		} else
 		if (state == 1) {
 			state = 0;
@@ -62,6 +61,17 @@ function Update() {
 
 function OnTriggerStay2D(col: Collider2D) {
 	if (col.gameObject.layer != 8) {
-		print(col.gameObject.name);
+		switch (col.gameObject.name) {
+			case "book":
+				uitext.text = "book";
+				break;
+			default:
+				uitext.text = "default";
+				break;
+		}
 	}
+}
+
+function OnTriggerExit2D(col: Collider2D) {
+	uitext.text = "There's nothing to do here";
 }
