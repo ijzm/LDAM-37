@@ -3,6 +3,8 @@ var a: Vector2;
 var b: Vector2;
 var speed: float = 0;
 
+
+
 function Start() {
 	speed += Random.Range(-5, 5);
 }

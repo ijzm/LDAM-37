@@ -2,27 +2,40 @@
 var rb: Rigidbody2D;
 var speed: int;
 
+var health: int = 3;
+
 var looking: String = "up";
 var trigger: GameObject;
 
 var textbox: GameObject;
 var uitext: UI.Text;
 
+var books: GameObject[];
+
 var state: int = 0; //0: Default 1: Textbox
 
 var cooldown: float;
-
+var healthcooldown: float;
+var flickercooldown: float;
 
 var Event: String = "";
 var lights: GameObject;
 var enemies: GameObject;
 
+var spriterenderer: SpriteRenderer;
+
 function Start() {
 	rb = GetComponent. < Rigidbody2D > ();
+	spriterenderer = GetComponent. < SpriteRenderer > ();
 	cooldown = Time.time;
+	healthcooldown = Time.time;
+	flickercooldown = Time.time;
 }
 
 function Update() {
+	if (health <= 0) {
+		SceneManager.LoadScene("menu");
+	}
 	if (state == 0) {
 		rb.velocity = new Vector2(
 			Input.GetAxis("Horizontal") * speed,
@@ -53,17 +66,31 @@ function Update() {
 			state = 1;
 			rb.velocity = Vector2.zero;
 			textbox.SetActive(true);
-
-			if (Event == "DarkBook") {
-				dark();
-			}
-
 		} else
 		if (state == 1) {
 			state = 0;
 			textbox.SetActive(false);
+			if (Event == "DarkBook") {
+				dark();
+				Destroy(books[0]);
+			}
 		}
 	}
+
+	if (Time.time < healthcooldown) {
+		if (Time.time > flickercooldown) {
+			flickercooldown = Time.time + 0.3;
+			if (spriterenderer.enabled == true) {
+				spriterenderer.enabled = false;
+			} else {
+				spriterenderer.enabled = true;
+			}
+		}
+	} else {
+		spriterenderer.enabled = true;
+	}
+
+
 
 }
 
@@ -79,10 +106,15 @@ function OnTriggerStay2D(col: Collider2D) {
 			default:
 				uitext.text = "default";
 				Event = "";
-
 				break;
 		}
 	}
+
+	if (col.gameObject.tag == "Enemy" && Time.time > healthcooldown) {
+		health--;
+		healthcooldown = Time.time + 3;
+	}
+
 }
 
 function OnTriggerExit2D(col: Collider2D) {
@@ -90,6 +122,7 @@ function OnTriggerExit2D(col: Collider2D) {
 }
 
 function dark() {
+	Event = "";
 	lights.SetActive(false);
-	enemies.SetActive(true);
+	Instantiate(Resources.Load("DarkBookEnemies"), Vector2.zero, Quaternion.identity);
 }
