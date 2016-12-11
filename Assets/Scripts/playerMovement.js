@@ -12,6 +12,11 @@ var state: int = 0; //0: Default 1: Textbox
 
 var cooldown: float;
 
+
+var Event: String = "";
+var lights: GameObject;
+var enemies: GameObject;
+
 function Start() {
 	rb = GetComponent. < Rigidbody2D > ();
 	cooldown = Time.time;
@@ -19,28 +24,27 @@ function Start() {
 
 function Update() {
 	if (state == 0) {
-
 		rb.velocity = new Vector2(
 			Input.GetAxis("Horizontal") * speed,
 			Input.GetAxis("Vertical") * speed
 		);
+	}
 
-		if (Input.GetAxis("Vertical") > 0) {
-			looking = "up";
-			trigger.transform.localPosition = new Vector2(0, 20);
-		} else
-		if (Input.GetAxis("Vertical") < 0) {
-			looking = "down";
-			trigger.transform.localPosition = new Vector2(0, -20);
-		} else
-		if (Input.GetAxis("Horizontal") > 0) {
-			looking = "right";
-			trigger.transform.localPosition = new Vector2(20, 0);
-		} else
-		if (Input.GetAxis("Horizontal") < 0) {
-			looking = "left";
-			trigger.transform.localPosition = new Vector2(-20, 0);
-		}
+	if (Input.GetAxis("Vertical") > 0 && state == 0) {
+		looking = "up";
+		trigger.transform.localPosition = new Vector2(0, 4);
+	} else
+	if (Input.GetAxis("Vertical") < 0 && state == 0) {
+		looking = "down";
+		trigger.transform.localPosition = new Vector2(0, -6);
+	} else
+	if (Input.GetAxis("Horizontal") > 0 && state == 0) {
+		looking = "right";
+		trigger.transform.localPosition = new Vector2(4, 0);
+	} else
+	if (Input.GetAxis("Horizontal") < 0 && state == 0) {
+		looking = "left";
+		trigger.transform.localPosition = new Vector2(-4, 0);
 	}
 
 	if (Input.GetAxis("Fire1") && Time.time > cooldown) {
@@ -50,23 +54,32 @@ function Update() {
 			rb.velocity = Vector2.zero;
 			textbox.SetActive(true);
 
+			if (Event == "DarkBook") {
+				dark();
+			}
+
 		} else
 		if (state == 1) {
 			state = 0;
 			textbox.SetActive(false);
 		}
 	}
+
 }
 
 
 function OnTriggerStay2D(col: Collider2D) {
 	if (col.gameObject.layer != 8) {
+		print(col.gameObject.name);
 		switch (col.gameObject.name) {
-			case "book":
-				uitext.text = "book";
+			case "DarkBook":
+				uitext.text = "Darkbook";
+				Event = "DarkBook";
 				break;
 			default:
 				uitext.text = "default";
+				Event = "";
+
 				break;
 		}
 	}
@@ -74,4 +87,9 @@ function OnTriggerStay2D(col: Collider2D) {
 
 function OnTriggerExit2D(col: Collider2D) {
 	uitext.text = "There's nothing to do here";
+}
+
+function dark() {
+	lights.SetActive(false);
+	enemies.SetActive(true);
 }
