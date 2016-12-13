@@ -2,7 +2,7 @@ var select: AudioSource;
 
 function play() {
 	select.Play();
-	SceneManager.LoadScene("game");
+	SceneManager.LoadScene("start");
 }
 
 function credits() {

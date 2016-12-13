@@ -76,7 +76,7 @@ function Update() {
 	} else
 	if (Input.GetAxis("Horizontal") < 0 && state == 0) {
 		looking = "left";
-		trigger.transform.localPosition = new Vector2(-4, 0);
+		trigger.transform.localPosition = new Vector2(4, 0);
 	}
 
 	if (Input.GetKeyUp("z") && Time.time > cooldown) {
@@ -259,6 +259,7 @@ function ice() {
 	rotatethingy[7].SetActive(true);
 	rotatethingy[5].SetActive(false);
 	rotatethingy[8].SetActive(false);
+	Instantiate(Resources.Load("IceBook_Enemies"), Vector2.zero, Quaternion.identity);
 	icebookenabled = true;
 }
 
